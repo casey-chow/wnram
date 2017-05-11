@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-const PathToWordnetDataFiles = "./data"
+// const PathToWordnetDataFiles = "./data"
 
 func sourceCodeRelPath(suffix string) string {
 	_, fileName, _, _ := runtime.Caller(1)
@@ -17,7 +17,7 @@ var wnInstance *Handle
 var wnErr error
 
 func init() {
-	wnInstance, wnErr = New(sourceCodeRelPath(PathToWordnetDataFiles))
+	wnInstance, wnErr = New()
 }
 
 func TestParsing(t *testing.T) {

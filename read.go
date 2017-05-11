@@ -2,8 +2,8 @@ package wnram
 
 import (
 	"bufio"
+	"bytes"
 	"io"
-	"os"
 )
 
 // InPlaceReadLine scans a file and invoke the provided callback for
@@ -38,10 +38,7 @@ func inPlaceReadLine(s io.Reader, cb func([]byte, int64, int64) error) error {
 }
 
 func inPlaceReadLineFromPath(filePath string, cb func([]byte, int64, int64) error) error {
-	f, err := os.Open(filePath)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	return inPlaceReadLine(f, cb)
+	data := MustAsset(filePath)
+	reader := bytes.NewReader(data)
+	return inPlaceReadLine(reader, cb)
 }

@@ -2,9 +2,6 @@ package wnram
 
 import (
 	"fmt"
-	"os"
-	"path"
-	"path/filepath"
 	"strings"
 	"time"
 )
@@ -216,27 +213,18 @@ func (w *Lookup) Related(r Relation) (relationships []Lookup) {
 
 // Initialize a new in-ram WordNet databases reading files from the
 // specified directory.
-func New(dir string) (*Handle, error) {
+func New() (*Handle, error) {
 	cnt := 0
 	type ix struct {
 		index string
 		pos   PartOfSpeech
 	}
 	byOffset := map[ix]*cluster{}
-	err := filepath.Walk(dir, func(filename string, info os.FileInfo, err error) error {
-		start := time.Now()
-		if err != nil || info.IsDir() {
-			return err
-		}
+	files := []string{"data/data.adj", "data/data.adv", "data/data.noun", "data/data.verb"}
 
-		// Skip '^.', '~$', and non-files.
-		if strings.HasPrefix(path.Base(filename), ".") || strings.HasSuffix(filename, "~") || strings.HasSuffix(filename, "#") {
-			return nil
-		}
-		// read only data files
-		if !strings.HasPrefix(path.Base(filename), "data") {
-			return nil
-		}
+	var err error
+	for _, filename := range files {
+		start := time.Now()
 
 		err = inPlaceReadLineFromPath(filename, func(data []byte, line, offset int64) error {
 			cnt++
@@ -286,8 +274,10 @@ func New(dir string) (*Handle, error) {
 			return nil
 		})
 		fmt.Printf("%s in %s\n", filename, time.Since(start).String())
-		return err
-	})
+		if err != nil {
+			break
+		}
+	}
 	if err != nil {
 		return nil, err
 	}
