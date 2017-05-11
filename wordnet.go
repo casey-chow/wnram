@@ -273,7 +273,7 @@ func New() (*Handle, error) {
 			}
 			return nil
 		})
-		fmt.Printf("%s in %s\n", filename, time.Since(start).String())
+		fmt.Printf("wnram: parsed %s in %s\n", filename, time.Since(start).String())
 		if err != nil {
 			break
 		}
